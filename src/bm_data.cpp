@@ -31,11 +31,7 @@
 #include <boost/graph/property_iter_range.hpp>
 #include <boost/graph/graphviz.hpp>
 
-#ifdef WIN32
 #include <unordered_map>
-#else
-#include <tr1/unordered_map>
-#endif
 
 
 //#include "../include/BM_Graph.hpp"

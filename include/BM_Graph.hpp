@@ -19,7 +19,7 @@ typedef unsigned int edgeindex;
 //typedef unsigned int country;
 //typedef unsigned int cabotage;
 typedef unsigned long long FFE; //Number of Forty Foot Equivalent containers
-typedef long long int integer;
+typedef long long int uinteger;
 typedef unsigned int uint;
 
 

@@ -25,11 +25,7 @@
 #include <boost/config.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/graph_traits.hpp>
-#ifdef WIN32
 #include <unordered_map>
-#else
-#include <tr1/unordered_map>
-#endif
 #ifndef BM_READER_HPP
 #define BM_READER_HPP
 

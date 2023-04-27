@@ -33,11 +33,7 @@
 #include <boost/graph/property_iter_range.hpp>
 #include <boost/graph/graphviz.hpp>
 
-#ifdef WIN32
 #include <unordered_map>
-#else
-#include <tr1/unordered_map>
-#endif
 
 #include "../include/BM_Graph.hpp"
 #include "../include/bm_reader.hpp"
@@ -225,7 +221,8 @@ void BM::reader::parse_demands()
 
 
 		pair<vertex_descriptor, vertex_descriptor> key=  make_pair ( o,d );
-		boost::tuple<double, double, double> value = make_tuple ( atof ( vec.at ( 2 ).c_str() ),atof ( vec.at ( 3 ).c_str() ),atof ( vec.at ( 4 ).c_str() ) );
+		boost::tuple<double, double, double> value = boost::make_tuple ( atof (
+            vec.at ( 2 ).c_str() ),atof ( vec.at ( 3 ).c_str() ),atof ( vec.at ( 4 ).c_str() ) );
 		pair<int,int> key_idx=make_pair(m_graph[o].idx,m_graph[d].idx);
 		m_demand_map.insert ( make_pair ( key, value ) );
 		m_instance_dem.insert( make_pair(key_idx, value));
@@ -416,7 +413,8 @@ void BM::reader::retrieve_instance_data()
 
 
 		pair<int, int> key=make_pair ( m_instance_graph[v].idx, m_instance_graph[u].idx);
-		m_instance_dist.insert ( make_pair ( key  , make_tuple(m_instance_graph[*ei].distance, m_instance_graph[*ei].isSuezTraversal, m_instance_graph[*ei].isPanamaTraversal)) );
+		m_instance_dist.insert ( make_pair ( key  , boost::make_tuple
+        (m_instance_graph[*ei].distance, m_instance_graph[*ei].isSuezTraversal, m_instance_graph[*ei].isPanamaTraversal)) );
 	}
 #ifdef DIST_GEN
 	cout << "Reading the mapping file." << endl ;

@@ -22,34 +22,30 @@
 #define BM_DATA_HPP
 
 #include "../include/BM_Graph.hpp"
-#include "bm_rotation.h"
+//#include "bm_rotation.h"
 
 #include <string>
-#ifdef WIN32
 #include <unordered_map>
-#else
-#include <tr1/unordered_map>
-#endif
 
 //Hash_functions for unordered maps for the key pair<int, int>
-namespace std
-  {
-#ifndef VS2010
-  namespace tr1
-    {
-#endif
-		template<>
-    struct hash< pair< int, int> >
-      {
-        std::size_t operator() ( pair<int, int> val ) const
-          {
-            return hash<int>() ( val.first ) + hash<int>() ( val.second );
-          }
-      };
-#ifndef VS2010
-  }
-#endif
-}
+//namespace std
+//  {
+//#ifndef VS2010
+//  namespace tr1
+//    {
+//#endif
+//		template<>
+//    struct hash< pair< int, int> >
+//      {
+//        std::size_t operator() ( pair<int, int> val ) const
+//          {
+//            return hash<int>() ( val.first ) + hash<int>() ( val.second );
+//          }
+//      };
+//#ifndef VS2010
+//  }
+//#endif
+//}
 
 /*********************************
 Variables
@@ -72,7 +68,7 @@ namespace BM
   struct vesselclass
     {
       //Name, Cap, TC, Draft, Min s, max s, s* ,bunker, suez cost, panama cost
-      vesselclass ( int id = 0, string name= "", FFE capacity = 0,  integer OPEXCost= 0, double draft = 0.0, double min_speed = 0.0, double max_speed = 0.0, double d_speed = 0.0,
+      vesselclass ( int id = 0, string name= "", FFE capacity = 0,  uinteger OPEXCost= 0, double draft = 0.0, double min_speed = 0.0, double max_speed = 0.0, double d_speed = 0.0,
                     double fuelConsumption= 0.0, double idleConsumption= 0.0, double panama=0, double suez=0 ) : m_idx ( id ), m_name ( name ), m_capacity ( capacity ),
           m_draft ( draft ) , m_design_speed ( d_speed ), m_min_speed ( min_speed ), m_max_speed ( max_speed ), m_fuel_consumption ( fuelConsumption ),m_idle_consumption ( idleConsumption ),
           m_OPEX_cost ( OPEXCost ), m_panama_cost(panama), m_suez_cost(suez)  {
@@ -82,7 +78,7 @@ namespace BM
           void set_qnt(int q){
 		  m_quantity=q;
 	  }
-	  
+
       uint m_idx; // The index of the vesselClass
       string m_name; // The name of the vessel Class
       FFE m_capacity; // The maximal load for the vesseltype
@@ -92,7 +88,7 @@ namespace BM
       double m_max_speed; // The maximal speed of the vesselclass, in knots: NM/Hr
       double m_fuel_consumption; // The fuel consumption in metric tonnes per day sailing at design speed, for the vessel class
       double m_idle_consumption; // The fuel consumption in metric tonnes per day idling at port, for the vessel class
-      integer m_OPEX_cost; // The cost to have the vessel sailing a single day
+      uinteger m_OPEX_cost; // The cost to have the vessel sailing a single day
       int m_quantity;
       double m_panama_cost;
       double m_suez_cost;

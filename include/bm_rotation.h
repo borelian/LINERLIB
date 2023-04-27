@@ -17,7 +17,8 @@ using namespace BM;
 class rotation {
 public:
 
-	rotation( BM::vesselclass v, double s, int num_v, vector<string> call_sequence);
+	rotation( struct vesselclass v, double s, int num_v, vector<string>
+	    call_sequence);
 
 	~rotation();
 
@@ -222,7 +223,7 @@ public:
 
 private:
 
-	BM::vesselclass m_class;
+	struct vesselclass m_class;
 	double m_speed;//Check if within min_max upon construction
 	int m_num_v; //Y^r in model
 	double m_num_round_trip; //m^r
