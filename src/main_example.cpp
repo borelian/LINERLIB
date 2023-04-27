@@ -1,33 +1,55 @@
 #include <iostream>
 #include <fstream>
-#include <string>
-#include <cerrno>
-
-#include <boost/foreach.hpp>
-#include <boost/concept/assert.hpp>
 
 
 #include "cl_parameters.hpp"
 #include "bm_reader.hpp"
 #define DEBUG_instance //check if instance is parsed correctly
 
-using namespace std;
-using namespace boost;
 
-
-void display_usage ( void )
+void display_usage ()
 {
-	cout << "Usage:" << endl;
-	cout << "./APPLIKATION NAME ..." << endl; //Change this to the name of your binary!
-	cout << "-p port file" << endl;
-	cout << "-d demand file" << endl;
-	cout << "-t distance file" << endl;
-	cout << "-f fleet data file" << endl;
-	cout << "-q fleet file" << endl;
-	cout << "-o outputfile" << endl;
-	cout << "-b timefile" <<"-? -h display usage" << endl;
+	std::cout << "Usage:" << std::endl;
+	std::cout << "./APPLIKATION NAME ..." << std::endl; //Change this to the name of your binary!
+	std::cout << "-p port file" << std::endl;
+	std::cout << "-d demand file" << std::endl;
+	std::cout << "-t distance file" << std::endl;
+	std::cout << "-f fleet data file" << std::endl;
+	std::cout << "-q fleet file" << std::endl;
+	std::cout << "-o outputfile" << std::endl;
+	std::cout << "-b timefile" <<"-? -h display usage" << std::endl;
 	/* ... */
 	exit ( EXIT_FAILURE );
+}
+
+
+void test_sol_baltic(BM::data& inst) {
+  auto &fleet = inst.get_fleet();
+  std::vector<std::vector<std::string>> calls;
+  calls.push_back({"RULED", "FIKTK", "DEBRV", "RUKGD", "PLGDY", "DEBRV"});
+  calls.push_back({"RULED", "DEBRV", "NOSVG", "SEGOT", "DEBRV"});
+  calls.push_back({"DEBRV", "DKAAR"});
+  std::vector<double> speeds = {11.1944, 15.4954, 10.0};
+  std::vector<int> vesselType = {0, 1, 0};
+  std::vector<int> numVessel = {3, 2, 1};
+  for (size_t rotId = 0; rotId < calls.size(); rotId++) {
+    std::cout << "Rotation " << rotId << ": [";
+    for (auto &call : calls[rotId])
+      std::cout << " " << call;
+    std::cout << "] with " << numVessel[rotId]
+              << " vessels at speed " << speeds[rotId]
+              << "\n";
+    rotation rot1(inst, fleet[vesselType[rotId]], speeds[rotId],
+                  numVessel[rotId],calls[rotId]);
+    std::cout << "\n\tDistance: " << rot1.getDistance()
+              << "\n\tWeeks: " << rot1.getRoundTripTime() / 7.0
+              << "\n\tbunker cost: " << rot1.get_bunker_cost()/numVessel[rotId]
+              << "\n\tPort call cost: " << rot1.get_port_call_cost()
+              << "\n\tVessel Class cost: " << rot1.get_vessel_running_cost()
+              << "\n\tCanal cost: " << rot1.get_canal_cost()
+              <<  std::endl;
+
+  }
 }
 
 int main ( int argc, char* argv[] )
@@ -36,7 +58,7 @@ int main ( int argc, char* argv[] )
 
 	if ( argc > 13 ) //If you extend the number of cases and arguments please increase this number
 	{
-		cerr << "Wrong Number of arguments" << endl;
+		std::cerr << "Wrong Number of arguments" << std::endl;
 		display_usage();
 		exit ( EXIT_FAILURE );
 		
@@ -74,14 +96,14 @@ int main ( int argc, char* argv[] )
 				break;
 			default:
 				/* Shouldn't get here */
-				cerr << "Unknown problem" << endl;
+				std::cerr << "Unknown problem" << std::endl;
 				display_usage();
 				break;
 		}
 	}
 
 #ifdef DEBUG_instance
-	cout << "Command line parameters: " << endl;
+	std::cout << "Command line parameters: " << std::endl;
 	cl_params.print();
 #endif
 	//parse benchmark instance
@@ -93,6 +115,7 @@ int main ( int argc, char* argv[] )
 	instanceBM.print_demands_by_id();
 	instanceBM.print_fleet();
 #endif
-	
+  instanceBM.print_distances_by_id();
+  test_sol_baltic(instanceBM);
 return 0;
 }

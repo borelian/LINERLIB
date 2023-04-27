@@ -6,9 +6,6 @@
 
 #include <iostream>
 
-using namespace boost;
-using namespace std;
-
 
 /*********************************
 Defines and Structs
@@ -19,7 +16,6 @@ typedef unsigned int edgeindex;
 //typedef unsigned int country;
 //typedef unsigned int cabotage;
 typedef unsigned long long FFE; //Number of Forty Foot Equivalent containers
-typedef long long int uinteger;
 typedef unsigned int uint;
 
 
@@ -28,20 +24,41 @@ struct Node //Ports, Canals and Waypoints
   {
 
     //constructor for parsing:   UNLOCODE;name;country;cabotage;region;latitude;longitude;draft;moveCost;transhipmentCost;callCostFixed; callCostPerFFE
-    Node ( int id = 0, string U = "", string N = "", string C = "", string CA="", string R= "",
-              double lat=0.0, double lon= 0.0, double d=0.0,
-              double t = 0.0, double l = 0.0 , double cf=0.0, double cffe=0.0 ) : idx ( id ), UNLOCODE ( U ), name ( N ), country ( C ), cabotage ( CA ), region ( R ),
-        latitude ( lat ), longitude ( lon ), draft ( d ),
-        transhipmentCost ( t ),localMoveCost ( l ), callCostFixed ( cf ), callCostPerFFE ( cffe ) {}
-
+    explicit Node (
+           int id = 0,
+           std::string U = "",
+           std::string N = "",
+           std::string C = "",
+           std::string CA="",
+           std::string R= "",
+           double lat = 0.0,
+           double lon = 0.0,
+           double d = 0.0,
+           double t = 0.0,
+           double l = 0.0 ,
+           double cf = 0.0,
+           double cffe = 0.0 ) :
+      idx ( id ),
+      UNLOCODE ( std::move(U) ),
+      name ( std::move(N) ),
+      country ( std::move(C) ),
+      cabotage ( std::move(CA) ),
+      region ( std::move(R) ),
+      latitude ( lat ),
+      longitude ( lon ),
+      draft ( d ),
+      transhipmentCost ( t ),
+      localMoveCost ( l ),
+      callCostFixed ( cf ),
+      callCostPerFFE ( cffe ) {}
 
     portindex idx; //< The port's index in the list
     //GEO info
-    string UNLOCODE; //< 5 digit UNLOCODE
-    string name; //< The name of the port
-    string country; //< The region the port belongs to
-    string cabotage; //< The region the port belongs to
-    string region; //< The region the port belongs to
+    std::string UNLOCODE; //< 5 digit UNLOCODE
+    std::string name; //< The name of the port
+    std::string country; //< The region the port belongs to
+    std::string cabotage; //< The region the port belongs to
+    std::string region; //< The region the port belongs to
     double latitude; //<  The latitude of the port
     double longitude; //<  the longitude of the port
 
@@ -61,10 +78,18 @@ struct Node //Ports, Canals and Waypoints
 
 struct Edge
   {
-
     //constructor for parsing
-    Edge ( int id = 0, double dist = 0.0, double d = 0.0, bool s= false, bool p=false )
-        : idx ( id ),  distance ( dist ), draft ( d ), isSuezTraversal ( s ), isPanamaTraversal ( p ) {}
+    explicit Edge (
+        int id = 0,
+        double dist = 0.0,
+        double d = 0.0,
+        bool s = false,
+        bool p = false ):
+      idx ( id ),
+      distance ( dist ),
+      draft ( d ),
+      isSuezTraversal ( s ),
+      isPanamaTraversal ( p ){}
 
     edgeindex idx; //< The edge's index in the list
     double distance; //< The edge's distance in Nm, Nautical Miles
@@ -76,10 +101,10 @@ struct Edge
   };
 
 //Graph
-typedef adjacency_list<
-vecS ,
-vecS ,
-bidirectionalS,
+typedef boost::adjacency_list<
+boost::vecS ,
+boost::vecS ,
+boost::bidirectionalS,
 Node,
 Edge>
 Graph;
@@ -93,13 +118,13 @@ typedef boost::graph_traits<Graph>::edge_descriptor edge_descriptor;
 typedef boost::graph_traits<Graph>::vertex_iterator Viterator;
 typedef boost::graph_traits<Graph>::edge_iterator Eiterator;
 
-typedef boost::graph_traits<Graph>::in_edge_iterator IEiterator;
-typedef boost::graph_traits<Graph>::out_edge_iterator OEiterator;
+//typedef boost::graph_traits<Graph>::in_edge_iterator IEiterator;
+//typedef boost::graph_traits<Graph>::out_edge_iterator OEiterator;
 
 class node_writer
 {
 public:
-   node_writer( BM::Graph& g)
+   explicit node_writer( BM::Graph& g)
       : g(g)
    {}
    void operator()(std::ostream& out,
@@ -114,7 +139,7 @@ private:
 class edge_writer
 {
 public:
-   edge_writer( BM::Graph& g)
+   explicit edge_writer( BM::Graph& g)
       : g(g)
    {}
    void operator()(std::ostream& out,

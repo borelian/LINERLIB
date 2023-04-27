@@ -9,9 +9,7 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#include "../include/cl_parameters.hpp"
-
-using namespace std;
+#include "cl_parameters.hpp"
 
 cl_parameters::cl_parameters()
 {
@@ -26,10 +24,10 @@ cl_parameters::~cl_parameters()
 
 
 void cl_parameters::print(){
-cout << "ports " << port_file <<
+std::cout << "ports " << port_file <<
 " demands " << demand_file <<
 " distances " << distance_file <<
 " vessels " << fleet_file <<
 " quantities " << fleet_data_file <<
-endl;
+std::endl;
 }

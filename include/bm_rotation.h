@@ -8,24 +8,21 @@
 #ifndef BM_ROTATION_H_
 #define BM_ROTATION_H_
 
-#include <boost/config.hpp>
 #include "bm_data.hpp"
-
-using namespace std;
-using namespace BM;
 
 class rotation {
 public:
-
-	rotation( struct vesselclass v, double s, int num_v, vector<string>
-	    call_sequence);
-
-	~rotation();
+	rotation(
+        BM::data& data,
+        struct BM::vesselclass& v,
+        double speed,
+        int num_vessels,
+        std::vector<std::string>& call_sequence);
 
 	/**There must be draft feasibility between vessel_class and port_calls
 	 * @return true if feasible, false if not
 	 */
-	bool is_draft_feasible(){
+	bool is_draft_feasible() const{
 		return m_draft_feasible;
 	}
 
@@ -37,7 +34,7 @@ public:
 	 * vessel_cost is term (2a) of the reference model (page 18)
 	 * @return=f_^{v_r}*Y^r	(=T^F*180*Y_r)
 	 */
-	double get_vessel_running_cost(){
+	double get_vessel_running_cost() const{
 		return m_vrc;
 	}
 
@@ -54,7 +51,7 @@ public:
 	 * Part of Equation (2b)
 	 * @return bunker price = m_r*Y^r*(bunker_sailing_per_roundtrip + bunker_idle_per_roundtrip)
 	 */
-	double get_bunker_cost(){
+	double get_bunker_cost() const {
 		return m_bc;
 	}
 
@@ -73,7 +70,7 @@ public:
 	 * Part of Equation d_j^{v_r}(2b)
 	 * @return port_call_cost = m_r*Y^r*(port_call_cost for one round trip)
 	 */
-	double get_port_call_cost(){
+	double get_port_call_cost() const {
 		return m_pc;
 	}
 
@@ -93,7 +90,7 @@ public:
 	 * Part of Equation a_{ij}^{v_r} (2b)
 	 * @return canal_cost = m_r*Y^r*(canal_cost for one round trip)
 	 */
-	double get_canal_cost(){
+	double get_canal_cost() const {
 		return m_cc;
 	}
 
@@ -103,7 +100,7 @@ public:
 	 * Part of Equation a_{ij}^{v_r} (2b)
 	 * @param canal_cost = m_r*Y^r*(canal_cost for one round trip)
 	 */
-	void set_canal_cost(double cc){
+	void set_canal_cost(double cc) {
 		m_cc=cc;
 	}
 
@@ -123,11 +120,11 @@ public:
 		m_num_v = numV;
 	}
 
-	const vector<string>& getPortCalls() const {
+	const std::vector<std::string>& getPortCalls() const {
 		return m_port_calls;
 	}
 
-	void setPortCalls(const vector<string>& portCalls) {
+	void setPortCalls(const std::vector<std::string>& portCalls) {
 		m_port_calls = portCalls;
 	}
 
@@ -171,63 +168,22 @@ public:
 		m_num_suez = numSuez;
 	}
 
-	/*Calculates the round trip time
-	 * sail hours + port hours
-	 * @return Round trip time  in DAYS
-	 */
-	double calculate_round_trip_time();
 
-
-	/**
-	 * Function to calculate bunker cost (idle and sailing) at e=600 USD per ton
-	 * Part of Equation (2b)
-	 * @return bunker price = m_r*Y^r*(bunker_sailing_per_roundtrip + bunker_idle_per_roundtrip)
-	 */
-
-	double calculate_bunker_cost(){
-		 double rv=0;
-		  //daily fuel burn* days to sail actual speed m_actual_speed and current distance
-		  double rt_fuel_burn= fuel_burn (m_speed )*( (m_distance/m_speed) /24.0 ); //ton per day
-		  double idle_burn= m_class.m_idle_consumption * m_num_calls; //ton per day
-		  //Bc for one round trip
-		  double  bc= 600 *  (rt_fuel_burn + idle_burn);
-		  //m_r*Y_r*bc
-		  rv=m_num_round_trip*m_num_v*bc;
-
-		  return rv;
-	}
-
-	//Helping function Page 15, BM Paper F_s = (s/v_∗^F)^3*f_∗^F (Fuel(speed)=(speed/design_speed)^3*Fuel(design_speed)
-	double fuel_burn(double speed);
-
-	/**
-	 * Function to calculate port_call_cost for vessel class v
-	 * Part of Equation a_{ij}^{v_r} (2b)
-	 * @return canal_cost = m_r*Y^r*(canal_cost for one round trip)
-	 */
-
-	double calculate_canal_cost(){
-		double rv=m_num_suez*m_class.m_suez_cost;
-		rv += m_num_panama*m_class.m_panama_cost;
-		m_cc=rv;
-		return rv;
-	}
-
-	const vesselclass& getClass() const {
+	const struct BM::vesselclass& getClass() const {
 		return m_class;
 	}
 
-	void setClass(const vesselclass& clazz) {
+	void setClass(const struct BM::vesselclass& clazz) {
 		m_class = clazz;
 	}
 
 private:
 
-	struct vesselclass m_class;
+	struct BM::vesselclass& m_class;
 	double m_speed;//Check if within min_max upon construction
 	int m_num_v; //Y^r in model
 	double m_num_round_trip; //m^r
-	vector<string> m_port_calls; //E_r as UNLOCODE port codes
+	std::vector<std::string>& m_port_calls; //E_r as UNLOCODE port codes
 	bool m_draft_feasible;
 	double m_vrc;
 	double m_bc;
@@ -239,6 +195,48 @@ private:
 	int m_num_suez;
 	int	m_num_panama;
 	double m_round_trip_time;
+
+  /*Calculates the round trip time
+* sail hours + port hours
+* @return Round trip time  in DAYS
+*/
+  double calculate_round_trip_time() const;
+
+
+  /**
+   * Function to calculate bunker cost (idle and sailing) at e=600 USD per ton
+   * Part of Equation (2b)
+   * @return bunker price = m_r*Y^r*(bunker_sailing_per_roundtrip + bunker_idle_per_roundtrip)
+   */
+
+  double calculate_bunker_cost(){
+
+    //daily fuel burn* days to sail actual speed m_actual_speed and current distance
+    const double rt_fuel_burn= fuel_burn (m_speed )*( (m_distance/m_speed)/24.0 ); //ton per day
+    const double idle_burn= m_class.m_idle_consumption * m_num_calls; //ton per day
+    //Bc for one round trip
+    const double bc= 600 *  (rt_fuel_burn + idle_burn);
+    //m_r*Y_r*bc
+    const double rv=m_num_round_trip*m_num_v*bc;
+
+    return rv;
+  }
+
+  //Helping function Page 15, BM Paper F_s = (s/v_∗^F)^3*f_∗^F (Fuel(speed)=(speed/design_speed)^3*Fuel(design_speed)
+  double fuel_burn(double speed) const;
+
+  /**
+   * Function to calculate port_call_cost for vessel class v
+   * Part of Equation a_{ij}^{v_r} (2b)
+   * @return canal_cost = m_r*Y^r*(canal_cost for one round trip)
+   */
+
+  double calculate_canal_cost(){
+    double rv=m_num_suez*m_class.m_suez_cost;
+    rv += m_num_panama*m_class.m_panama_cost;
+    m_cc=rv;
+    return rv;
+  }
 
 
 };

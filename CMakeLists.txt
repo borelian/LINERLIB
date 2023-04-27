@@ -16,7 +16,6 @@ add_executable(LINERLIB
         include/bm_rotation.h
         include/cl_parameters.hpp
         src/bm_data.cpp
-        src/bm_output.cpp
         src/bm_reader.cpp
         src/bm_rotation.cpp
         src/cl_parameters.cpp

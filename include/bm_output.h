@@ -42,12 +42,12 @@ namespace BM
 			return m_frequency;
 		}
 
-		void set_rotation ( vector<int> rotation )
+		void set_rotation ( std::vector<int> rotation )
 		{
 			m_rotation= rotation;
 		}
 
-		const vector<int> get_rotation() const
+		const std::vector<int> get_rotation() const
 		{
 			return m_rotation;
 		}
@@ -64,7 +64,7 @@ namespace BM
 		double m_frequency;
 
 		//Rotation
-		vector<int> m_rotation;
+		std::vector<int> m_rotation;
 
 
 		//TODO's further extensions:
@@ -96,12 +96,12 @@ namespace BM
 			return m_volume;
 		}
 
-		void set_path ( vector<portcall> path )
+		void set_path ( std::vector<portcall> path )
 		{
 			m_path= path;
 		}
 
-		const vector<portcall> get_path() const
+		const std::vector<portcall> get_path() const
 		{
 			return m_path;
 		}
@@ -112,7 +112,7 @@ namespace BM
 		double m_volume;
 
 		//Path
-		vector<portcall> m_path;
+		std::vector<portcall> m_path;
 
 	};
 
@@ -133,19 +133,19 @@ namespace BM
 			return m_indata;
 		}
 
-		void set_services ( vector<service> services )  
+		void set_services ( std::vector<service> services )  
 		{
 			m_services= services;
 		}
-		vector<service> get_services()  
+		std::vector<service> get_services()  
 		{
 			return m_services;
 		}
-		void set_routings ( vector<routing> routings )  
+		void set_routings ( std::vector<routing> routings )  
 		{
 			m_routings= routings;
 		}
-		vector<routing> get_routings() 
+		std::vector<routing> get_routings() 
 		{
 			return m_routings;
 		}
@@ -156,10 +156,10 @@ namespace BM
 		BM::data* m_indata;
 
 		//Services
-		vector<service> m_services;
+		std::vector<service> m_services;
 
 		//Routings
-		vector<routing> m_routings;
+		std::vector<routing> m_routings;
 
 	};
 

@@ -18,8 +18,6 @@
 	@author berit <blof@man.dtu.dk>
 */
 
-using namespace std;
-
 class cl_parameters{
 public:
     cl_parameters();

@@ -18,25 +18,15 @@
 
  */
 
-#include "../include/BM_Graph.hpp"
-#include "../include/bm_data.hpp"
-#include "../include/cl_parameters.hpp"
+#include "BM_Graph.hpp"
+#include "bm_data.hpp"
+#include "cl_parameters.hpp"
 #include "bm_rotation.h"
-#include <boost/config.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <unordered_map>
 #ifndef BM_READER_HPP
 #define BM_READER_HPP
-
-using namespace std;
-using namespace boost;
-typedef std::map < std::pair<graph_traits<BM::Graph>::vertex_descriptor, graph_traits<BM::Graph>::vertex_descriptor> , boost::tuple<double, double, double> > demand_map_t;
-typedef std::map < std::pair<int, int> , boost::tuple<double, double, double> > demand_idx_map_t;
-// typedef std::tr1::unordered_map<std::pair<int, int>, boost::tuple<double, bool, bool> > data_map_t;
-// typedef std::tr1::unordered_map<int, string> port_map_t;
-typedef std::multimap<std::pair<int, int>,boost::tuple<double, bool, bool> > data_map_t;
-typedef std::map<int, string> port_map_t;
 
 
 namespace BM
@@ -44,8 +34,8 @@ namespace BM
 class reader
 {
 public:
-	reader ( cl_parameters );
-	~reader();
+	explicit reader ( cl_parameters& cmdline ):
+        m_file_names(cmdline) {};
 
 	BM::data parse_instance();
 	void parse_ports_to_vertices();
@@ -55,48 +45,48 @@ public:
 	void retrieve_instance_data();
 	void make_port_call_costs();
 	void make_vessel_class_bunker_consumption();
-	const Graph get_graph()
+
+	Graph get_graph() const
 	{
 		return m_graph;
 	}
 
-	const Graph get_instance_graph()
+	Graph get_instance_graph() const
 	{
 		return m_instance_graph;
 	}
 
-	vector<vesselclass> get_fleet()
-    		  {
+	std::vector<vesselclass> get_fleet() const
+    {
 		return m_fleet;
-    		  }
+    }
 
-	const demand_map_t get_demands()
+	demand_map_t get_demands() const
 	{
 		return m_demand_map;
 	}
 
-	const demand_idx_map_t get_demands_by_id()
+	demand_idx_map_t get_demands_by_id() const
 	{
 		return m_instance_dem;
 	}
 
-	const data_map_t get_distances_by_id()
+	data_map_t get_distances_by_id() const
 	{
 		return m_instance_dist;
 	}
 
-	const map<string, vertex_descriptor> get_UNLOCODE_to_vertex()
-    		  {
+	std::map<std::string, vertex_descriptor> get_UNLOCODE_to_vertex() const
+    {
 		return m_UNLOCODE_to_vertex;
-    		  }
+    }
 
-	const cl_parameters get_file_names()
+	cl_parameters get_file_names() const
 	{
 		return m_file_names;
 	}
 
-
-	port_map_t get_ports()
+	port_map_t get_ports() const
 	{
 		return m_instance_ports;
 	}
@@ -107,20 +97,20 @@ private:
 	cl_parameters m_file_names;
 	Graph m_graph; //a graph representation of the vertices
 	demand_map_t m_demand_map;
-	vector<vesselclass> m_fleet;
-	map<string, vertex_descriptor> m_UNLOCODE_to_vertex;
+	std::vector<vesselclass> m_fleet;
+	std::map<std::string, vertex_descriptor> m_UNLOCODE_to_vertex;
 	data_map_t m_instance_dist;
 	demand_idx_map_t m_instance_dem;
 	port_map_t m_instance_ports;
 	Graph m_instance_graph;
 
-	vertex_descriptor UNLOCODE_to_vertex ( string UNLOCODE );
+	vertex_descriptor UNLOCODE_to_vertex ( std::string& UNLOCODE );
 	//vesselclass get_vessel_class(int capacity);
 	void test_bundled_properties();
 
-	pair<double, double> m_suez;
+	std::pair<double, double> m_suez;
 
-	pair<double, double> m_panama;
+	std::pair<double, double> m_panama;
 
 	//vector<rotation> m_rotations; //rotation variables for validator
 };

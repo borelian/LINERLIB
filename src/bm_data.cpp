@@ -18,35 +18,17 @@
 
 */
 
-#include <iostream>     // cout, endl
-#include <fstream>      // fstream
-#include <vector>
-#include <string>
-#include <algorithm>    // copy
+#include <iostream>     // std::cout, std::endl
 #include <iterator>     // ostream_operator
+#include <cfloat>
+#include <vector>
 
-#include <boost/config.hpp>
 #include <boost/graph/adjacency_list.hpp>
-#include <boost/graph/graph_traits.hpp>
-#include <boost/graph/property_iter_range.hpp>
 #include <boost/graph/graphviz.hpp>
 
-#include <unordered_map>
-
-
-//#include "../include/BM_Graph.hpp"
-#include "../include/bm_data.hpp"
+#include "bm_data.hpp"
 
 #define DEBUG_OUT
-
-using namespace std;
-using namespace boost;
-
-typedef std::map < std::pair<graph_traits<BM::Graph>::vertex_descriptor, graph_traits<BM::Graph>::vertex_descriptor> , boost::tuple<double, double, double> > demand_map_t;
-typedef boost::graph_traits < BM::Graph >::vertex_descriptor vertex;
-typedef boost::graph_traits < BM::Graph >::edge_descriptor edge;
-
-
 
 void BM::data::print_demands()
 {
@@ -55,56 +37,57 @@ void BM::data::print_demands()
   itend=m_demands.end();
   for ( it=m_demands.begin(); it!=itend; it++ )
     {
-      pair<vertex_descriptor, vertex_descriptor> key=it->first;
-      boost::tuple<double, double, double> value =it->second;
-      cout << m_graph[key.first].UNLOCODE << "-" << m_graph[key.second].UNLOCODE << " FFE: " <<
-           get<0> ( value ) << " $: " << get<1> ( value ) << " TT: " << get<2> ( value ) << endl;
+      std::pair<vertex_descriptor, vertex_descriptor> key=it->first;
+      std::tuple<double, double, double> value =it->second;
+      std::cout << m_graph[key.first].UNLOCODE << "-" << m_graph[key.second].UNLOCODE << " FFE: " <<
+           get<0> ( value ) << " $: " << get<1> ( value ) << " TT: " << get<2> ( value ) << std::endl;
     }
 }
 
 void BM::data::print_demands_by_id()
 {
-string unl_1, unl_2;
+std::string unl_1, unl_2;
   demand_idx_map_t::iterator it, itend;
   port_map_t::iterator p_it, p_itend;
   itend=m_demands_by_id.end();
   p_itend=m_ports.end();
   for ( it=m_demands_by_id.begin(); it!=itend; it++ )
     {
-      pair<int, int> key=it->first;
-      boost::tuple<double, double, double> value =it->second;
+      std::pair<int, int> key=it->first;
+      std::tuple<double, double, double> value =it->second;
       p_it=m_ports.find(key.first);
       if(p_it!=p_itend) unl_1=p_it->second;
       p_it=m_ports.find(key.second);
       if(p_it!=p_itend) unl_2=p_it->second;
-      cout << unl_1 << "-" << unl_2 << " FFE: " <<
-      get<0> ( value ) << " $: " << get<1> ( value ) << " TT: " << get<2> ( value ) << endl;
+      std::cout << unl_1 << "-" << unl_2 << " FFE: " <<
+      get<0> ( value ) << " $: " << get<1> ( value ) << " TT: " << get<2> ( value ) << std::endl;
     }
 }
 
 void BM::data::print_distances_by_id()
 {
-string unl_1, unl_2;
+std::string unl_1, unl_2;
   data_map_t::iterator it, itend;
   port_map_t::iterator p_it, p_itend;
   itend=m_distances_by_id.end();
   p_itend=m_ports.end();
   for ( it=m_distances_by_id.begin(); it!=itend; it++ )
     {
-      pair<int, int> key=it->first;
-      boost::tuple<double, bool, bool> value =it->second;
+      std::pair<int, int> key=it->first;
+      std::tuple<double, bool, bool> value =it->second;
       p_it=m_ports.find(key.first);
       if(p_it!=p_itend) unl_1=p_it->second;
       p_it=m_ports.find(key.second);
       if(p_it!=p_itend) unl_2=p_it->second;
-      cout << unl_1 << "-" << unl_2 << " nm: " <<
-      get<0> ( value ) << " is suez: " << get<1> ( value ) << " is panama: " << get<2> ( value ) << endl;
+      std::cout << unl_1 << "(" << key.first << ")-"
+                << unl_2 << "(" << key.second << ") nm:" <<
+      get<0> ( value ) << " is suez: " << get<1> ( value ) << " is panama: " << get<2> ( value ) << std::endl;
     }
 }
 
 
 
-void BM::data::print_graph ( string filename )
+void BM::data::print_graph ( std::string filename )
 {
   node_writer nw ( m_graph );
   edge_writer ew ( m_graph );
@@ -112,7 +95,7 @@ void BM::data::print_graph ( string filename )
   write_graphviz ( of, m_graph,nw, ew );
 }
 
-void BM::data::print_inst_graph ( string filename )
+void BM::data::print_inst_graph ( std::string filename )
 {
   node_writer nw ( m_instance_graph );
   edge_writer ew ( m_instance_graph );
@@ -122,11 +105,11 @@ void BM::data::print_inst_graph ( string filename )
 
 void BM::data::print_fleet()
 {
-  vector<vesselclass>::iterator it, it_end;
+  std::vector<vesselclass>::iterator it, it_end;
   it_end=m_fleet.end();
   for ( it=m_fleet.begin(); it != it_end; it++ )
     {
-      cout << "Name: " <<  it->m_name << " FFE: " <<  it->m_capacity << " OPEX: " <<  it->m_OPEX_cost <<" design speed: " <<   it->m_design_speed << " fuel consumption " <<  it->m_fuel_consumption <<" idle consumption " <<  it->m_idle_consumption <<" quantity " << it->m_quantity << " suez cost " << it->m_suez_cost << " panama cost " << it->m_panama_cost << endl;
+      std::cout << "Name: " <<  it->m_name << " FFE: " <<  it->m_capacity << " OPEX: " <<  it->m_OPEX_cost <<" design speed: " <<   it->m_design_speed << " fuel consumption " <<  it->m_fuel_consumption <<" idle consumption " <<  it->m_idle_consumption <<" quantity " << it->m_quantity << " suez cost " << it->m_suez_cost << " panama cost " << it->m_panama_cost << std::endl;
     }
 }
 
@@ -136,6 +119,69 @@ void BM::data::print_ports()
   itend=m_ports.end();
   for ( it=m_ports.begin(); it!=itend; it++ )
     {
-      cout << it->first << "-" << it->second<< endl;
+      std::cout << it->first << "-" << it->second<< std::endl;
     }
+}
+
+void BM::data::create_inverse_port_map() {
+  for (auto& port: m_ports) {
+    m_UNLOCODE_to_vertex.insert(std::make_pair(port.second, port.first));
+  }
+}
+
+BM::vertex_descriptor BM::data::UNLOCODE_to_vertex ( std::string& UNLOCODE )
+{
+  vertex_descriptor rv;
+  std::map<std::string, vertex_descriptor>::iterator it, it_end;
+  it_end=m_UNLOCODE_to_vertex.end();
+  //find the vertices
+  it=m_UNLOCODE_to_vertex.find ( UNLOCODE );
+  if ( it != it_end )
+  {
+    rv=it->second;
+  }
+  else
+  {
+    std::cout << "The port " << UNLOCODE << " is not defined!" << std::endl;
+    return -1;
+    //exit ( 0 );
+  }
+  return rv;
+}
+
+double BM::data::get_distance_between_ports(
+    std::string& UNLOCODE1,
+    std::string& UNLOCODE2) {
+  auto id_from = UNLOCODE_to_vertex(UNLOCODE1);
+  auto id_dest =  UNLOCODE_to_vertex(UNLOCODE2);
+  if (auto search = m_distances_by_id.find({id_from, id_dest});
+  search != m_distances_by_id.end()) {
+    auto& dist = std::get<0>(search->second);
+    return dist;
+  }
+  return DBL_MAX;
+}
+
+bool BM::data::use_suez_canal(
+    std::string& UNLOCODE1,
+    std::string& UNLOCODE2) {
+  auto id_from = UNLOCODE_to_vertex(UNLOCODE1);
+  auto id_dest =  UNLOCODE_to_vertex(UNLOCODE2);
+  if (auto search = m_distances_by_id.find({id_from, id_dest});
+      search != m_distances_by_id.end()) {
+    auto& dist = std::get<2>(search->second);
+    return dist;
+  }
+}
+
+bool BM::data::use_panama_canal(
+    std::string& UNLOCODE1,
+    std::string& UNLOCODE2) {
+  auto id_from = UNLOCODE_to_vertex(UNLOCODE1);
+  auto id_dest =  UNLOCODE_to_vertex(UNLOCODE2);
+  if (auto search = m_distances_by_id.find({id_from, id_dest});
+      search != m_distances_by_id.end()) {
+    auto& dist = std::get<1>(search->second);
+    return dist;
+  }
 }
