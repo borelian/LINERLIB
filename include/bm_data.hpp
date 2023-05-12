@@ -165,12 +165,10 @@ namespace BM
 
       /**@returns a demand map with key consisting of port idxs
       */
-      demand_idx_map_t get_demands_by_id() const
+      demand_idx_map_t& get_demands_by_id() const
       {
         return m_demands_by_id;
       }
-      
- 
 
       bool get_all_to_all_graph() const
       {

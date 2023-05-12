@@ -27,7 +27,6 @@ rotation::rotation(
   // calculated all terms in equation 2a and 2b will return zero.
   m_num_calls=static_cast<int>(m_port_calls.size());
 
-  m_bc = calculate_bunker_cost();
 
   const auto & graph = data.get_instance_graph();
   auto prev = m_port_calls.back();
@@ -49,6 +48,8 @@ rotation::rotation(
     prev = curr;
   }
   m_round_trip_time = calculate_round_trip_time();
+  m_bc = calculate_bunker_cost();
+
 
 }
 

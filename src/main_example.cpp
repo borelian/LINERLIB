@@ -1,9 +1,12 @@
+// -p data/ports.csv -d data/Demand_Baltic.csv -t data/dist_dense.csv -q data/fleet_data.csv -f data/fleet_Baltic.csv -o nose
+
 #include <iostream>
 #include <fstream>
 
 
 #include "cl_parameters.hpp"
 #include "bm_reader.hpp"
+#include "bm_solution.h"
 #define DEBUG_instance //check if instance is parsed correctly
 
 
@@ -32,12 +35,16 @@ void test_sol_baltic(BM::data& inst) {
   std::vector<double> speeds = {11.1944, 15.4954, 10.0};
   std::vector<int> vesselType = {0, 1, 0};
   std::vector<int> numVessel = {3, 2, 1};
+
+  bm_solution solution(inst);
+
   for (size_t rotId = 0; rotId < calls.size(); rotId++) {
     std::cout << "Rotation " << rotId << ": [";
     for (auto &call : calls[rotId])
       std::cout << " " << call;
     std::cout << "] with " << numVessel[rotId]
-              << " vessels at speed " << speeds[rotId]
+              << " vessels of capacity " << fleet[vesselType[rotId]].m_capacity
+              << " at speed " << speeds[rotId]
               << "\n";
     rotation rot1(inst, fleet[vesselType[rotId]], speeds[rotId],
                   numVessel[rotId],calls[rotId]);
@@ -48,9 +55,59 @@ void test_sol_baltic(BM::data& inst) {
               << "\n\tVessel Class cost: " << rot1.get_vessel_running_cost()
               << "\n\tCanal cost: " << rot1.get_canal_cost()
               <<  std::endl;
-
+    solution.add_rotation(rot1);
   }
+
+  solution.compute_best_flows();
+  solution.display_port_operations();
+  std::cout << "Done:" << std::endl;
 }
+
+void test_sol_WAF(BM::data& inst) {
+  auto &fleet = inst.get_fleet();
+  std::vector<std::vector<std::string>> calls;
+  calls.push_back({"ESALG", "SNDKR", "ESALG", "BJCOO", "CDMAT", "CDBOA"});
+  calls.push_back({"ESALG", "BJCOO", "AOLOB", "CGPNR", "CIABJ"});
+  calls.push_back({"ESALG", "GNCKY", "LRMLW", "ESALG", "SLFNA", "GHTKD",
+                   "TGLFW", "GALBV", "AOLAD"});
+  calls.push_back({"CMDLA", "NGAPP"});
+  calls.push_back({"ESALG", "CIABJ", "TGLFW", "ESALG", "NGAPP"});
+  calls.push_back({"ESALG", "AOLAD", "NGAPP", "GHTKD"});
+  calls.push_back({"ESALG", "NGAPP"});
+  calls.push_back({"CIABJ", "NGAPP", "ESALG"});
+  std::vector<double> speeds = {10.6172, 11.6375, 13.1052, 10.0, 13.259,
+                                10.7567, 13.1579, 10.0267};
+  std::vector<int> vesselType = {1, 1, 0, 0, 1, 0, 1, 1};
+  std::vector<int> numVessel = {7, 5, 7, 1, 6, 5, 3, 4};
+
+  bm_solution solution(inst);
+
+  for (size_t rotId = 0; rotId < calls.size(); rotId++) {
+    std::cout << "Rotation " << rotId << ": [";
+    for (auto &call : calls[rotId])
+      std::cout << " " << call;
+    std::cout << "] with " << numVessel[rotId]
+              << " vessels of capacity " << fleet[vesselType[rotId]].m_capacity
+              << " at speed " << speeds[rotId]
+              << "\n";
+    rotation rot1(inst, fleet[vesselType[rotId]], speeds[rotId],
+                  numVessel[rotId],calls[rotId]);
+    std::cout << "\n\tDistance: " << rot1.getDistance()
+              << "\n\tWeeks: " << rot1.getRoundTripTime() / 7.0
+              << "\n\tbunker cost: " << rot1.get_bunker_cost()/numVessel[rotId]
+              << "\n\tPort call cost: " << rot1.get_port_call_cost()
+              << "\n\tVessel Class cost: " << rot1.get_vessel_running_cost()
+              << "\n\tCanal cost: " << rot1.get_canal_cost()
+              <<  std::endl;
+    solution.add_rotation(rot1);
+  }
+
+  solution.compute_best_flows();
+  solution.display_port_operations();
+  solution.display_solution_objective();
+  std::cout << "Done:" << std::endl;
+}
+
 
 int main ( int argc, char* argv[] )
 {
@@ -116,6 +173,8 @@ int main ( int argc, char* argv[] )
 	instanceBM.print_fleet();
 #endif
   instanceBM.print_distances_by_id();
-  test_sol_baltic(instanceBM);
+
+  test_sol_WAF(instanceBM);
+  //test_sol_baltic(instanceBM);
 return 0;
 }

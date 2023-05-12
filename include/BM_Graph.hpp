@@ -24,6 +24,7 @@ struct Node //Ports, Canals and Waypoints
   {
 
     //constructor for parsing:   UNLOCODE;name;country;cabotage;region;latitude;longitude;draft;moveCost;transhipmentCost;callCostFixed; callCostPerFFE
+    // WARNING transhipment and load cost are inverted! Fixed.
     explicit Node (
            int id = 0,
            std::string U = "",
@@ -47,8 +48,8 @@ struct Node //Ports, Canals and Waypoints
       latitude ( lat ),
       longitude ( lon ),
       draft ( d ),
-      transhipmentCost ( t ),
-      localMoveCost ( l ),
+      transhipmentCost ( l ), // WARNING transhipment and load cost are inverted! Fixed.
+      localMoveCost ( t ), // WARNING transhipment and load cost are  inverted! Fixed.
       callCostFixed ( cf ),
       callCostPerFFE ( cffe ) {}
 
